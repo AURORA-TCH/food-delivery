@@ -1,0 +1,61 @@
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "Pjtg.admw1";
+$dbname = "mydb";
+
+// Get parameters from the request
+$orderId = isset($_GET['orderId']) ? $_GET['orderId'] : null;
+$action = isset($_GET['action']) ? $_GET['action'] : null;
+
+if (!$orderId || !$action) {
+    echo "<script>alert('Invalid parameters!'); window.location = 'adminOrders.php';</script>";
+    exit();
+}
+
+try {
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    if ($action === "accept") {
+        // Update order status to 'Accepted'
+        $updateQuery = "UPDATE orders SET status = 'Accepted' WHERE id = ?";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bind_param("i", $orderId);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            echo "<script>alert('Order Accepted!'); window.location = 'adminOrders.php';</script>";
+        } else {
+            echo "<script>alert('Order not found or already updated!'); window.location = 'adminOrders.php';</script>";
+        }
+
+    } elseif ($action === "delete") {
+        // Delete the order
+        $deleteQuery = "DELETE FROM orders WHERE id = ?";
+        $stmt = $conn->prepare($deleteQuery);
+        $stmt->bind_param("i", $orderId);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            echo "<script>alert('Order Deleted!'); window.location = 'adminOrders.php';</script>";
+        } else {
+            echo "<script>alert('Order not found!'); window.location = 'adminOrders.php';</script>";
+        }
+
+    } else {
+        echo "<script>alert('Invalid action!'); window.location = 'adminOrders.php';</script>";
+    }
+
+} catch (Exception $e) {
+    echo "<script>alert('Error: " . $e->getMessage() . "'); window.location = 'adminOrders.php';</script>";
+} finally {
+    $conn->close();
+}
+?>

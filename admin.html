@@ -1,0 +1,108 @@
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "Pjtg.admw1";
+$dbname = "mydb";
+
+try {
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Query to fetch orders from the orders table
+    $orderQuery = "SELECT * FROM orders"; // Assuming the table name is 'orders'
+    $result = $conn->query($orderQuery);
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Food Delivery Orders</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .button {
+            padding: 5px 10px;
+            text-decoration: none;
+            color: white;
+            background-color: green;
+            border-radius: 5px;
+        }
+        .delete-button {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Food Delivery Orders</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Food Items</th>
+                <th>Total Price</th>
+                <th>Order Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php 
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $orderId = $row["id"];
+                        $name = $row["name"];
+                        $phone = $row["phone"];
+                        $email = $row["email"];
+                        $address = $row["address"];
+                        $foodItems = $row["food_items"];
+                        $totalPrice = $row["total_price"];
+                        $orderDate = $row["order_date"];
+            ?>
+                <tr>
+                    <td><?php echo $orderId; ?></td>
+                    <td><?php echo htmlspecialchars($name); ?></td>
+                    <td><?php echo htmlspecialchars($phone); ?></td>
+                    <td><?php echo htmlspecialchars($email); ?></td>
+                    <td><?php echo htmlspecialchars($address); ?></td>
+                    <td><?php echo htmlspecialchars($foodItems); ?></td>
+                    <td><?php echo htmlspecialchars($totalPrice); ?></td>
+                    <td><?php echo htmlspecialchars($orderDate); ?></td>
+                    <td>
+                        <a href="adminAction.php?action=accept&orderId=<?php echo $orderId; ?>" class="button">Accept</a>
+                        <a href="adminAction.php?action=delete&orderId=<?php echo $orderId; ?>" class="button delete-button">Delete</a>
+                    </td>
+                </tr>
+            <?php 
+                    }
+                } else {
+                    echo "<tr><td colspan='9'>No orders found</td></tr>";
+                }
+            ?>
+        </tbody>
+    </table>
+</body>
+</html>
+<?php
+} catch (Exception $e) {
+    echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+} finally {
+    $conn->close();
+}
+?>

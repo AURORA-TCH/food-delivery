@@ -1,0 +1,107 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Retrieve form data
+    $name = $_POST['name'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $address = $_POST['address'];
+    $foodItems = $_POST['foodItems'];
+    $totalPrice = $_POST['totalPrice'];
+
+    $conn = null;
+
+    try {
+        // Database connection
+        $servername = "localhost";
+        $username = "root";
+        $password = "Pjtg.admw1";
+        $dbname = "mydb";
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Insert data into the database
+        $sql = "INSERT INTO orders (name, phone, email, address, food_items, total_price) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssd", $name, $phone, $email, $address, $foodItems, $totalPrice);
+
+        if ($stmt->execute()) {
+            echo "<p>Order placed successfully!</p>";
+        } else {
+            echo "<p>Failed to place the order. Please try again.</p>";
+        }
+
+        $stmt->close();
+        $conn->close();
+
+    } catch (Exception $e) {
+        echo "<p>Error: " . $e->getMessage() . "</p>";
+        if ($conn) {
+            $conn->close();
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Food Delivery Website</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="css/hover-min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="navbar">
+    <nav id="site-top-nav" class="navbar-menu navbar-fixed-top">
+        <div class="container">
+            <div class="logo">
+                <a href="index.php" title="Logo">
+                    <img src="img/logo.png" alt="Logo" class="img-responsive">
+                </a>
+            </div>
+            <div class="menu text-right">
+                <ul>
+                    <li><a class="hvr-underline-from-center" href="index.php">Home</a></li>
+                    <li><a class="hvr-underline-from-center" href="categories.php">Categories</a></li>
+                    <li><a class="hvr-underline-from-center" href="foods.php">Foods</a></li>
+                    <li><a class="hvr-underline-from-center" href="order.php">Order</a></li>
+                    <li><a class="hvr-underline-from-center" href="contact.php">Contact</a></li>
+                    <li><a class="hvr-underline-from-center" href="login.php">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<section class="order">
+    <div class="container">
+        <h2 class="text-center">Fill this form to confirm your order.</h2>
+        <form method="POST" class="form">
+            <fieldset>
+                <legend>Delivery Details</legend>
+                <p class="label">Full Name</p>
+                <input type="text" name="name" placeholder="Enter your name..." required>
+                <p class="label">Phone Number</p>
+                <input type="text" name="phone" placeholder="Enter your phone..." required>
+                <p class="label">Email</p>
+                <input type="email" name="email" placeholder="Enter your email..." required>
+                <p class="label">Address</p>
+                <input type="text" name="address" placeholder="Enter your address..." required>
+                <p class="label">Food Item</p>
+                <input type="text" name="foodItems" placeholder="Enter food items..." required>
+                <p class="label">Total Price</p>
+                <input type="text" name="totalPrice" placeholder="Enter total price..." required>
+                <input type="submit" value="Confirm Order" class="btn-primary">
+            </fieldset>
+        </form>
+    </div>
+</section>
+</body>
+</html>
