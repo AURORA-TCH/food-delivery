@@ -1,52 +1,3 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Retrieve form data
-    $name = $_POST['name'];
-    $phone = $_POST['phone'];
-    $email = $_POST['email'];
-    $address = $_POST['address'];
-    $foodItems = $_POST['foodItems'];
-    $totalPrice = $_POST['totalPrice'];
-
-    $conn = null;
-
-    try {
-        // Database connection
-        $servername = "localhost";
-        $username = "root";
-        $password = "Pjtg.admw1";
-        $dbname = "mydb";
-
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        // Insert data into the database
-        $sql = "INSERT INTO orders (name, phone, email, address, food_items, total_price) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssd", $name, $phone, $email, $address, $foodItems, $totalPrice);
-
-        if ($stmt->execute()) {
-            echo "<p>Order placed successfully!</p>";
-        } else {
-            echo "<p>Failed to place the order. Please try again.</p>";
-        }
-
-        $stmt->close();
-        $conn->close();
-
-    } catch (Exception $e) {
-        echo "<p>Error: " . $e->getMessage() . "</p>";
-        if ($conn) {
-            $conn->close();
-        }
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,12 +20,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
             <div class="menu text-right">
                 <ul>
-                    <li><a class="hvr-underline-from-center" href="index.php">Home</a></li>
-                    <li><a class="hvr-underline-from-center" href="categories.php">Categories</a></li>
-                    <li><a class="hvr-underline-from-center" href="foods.php">Foods</a></li>
-                    <li><a class="hvr-underline-from-center" href="order.php">Order</a></li>
-                    <li><a class="hvr-underline-from-center" href="contact.php">Contact</a></li>
-                    <li><a class="hvr-underline-from-center" href="login.php">Login</a></li>
+                    <li><a class="hvr-underline-from-center" href="index.html">Home</a></li>
+                    <li><a class="hvr-underline-from-center" href="categories.html">Categories</a></li>
+                    <li><a class="hvr-underline-from-center" href="foods.html">Foods</a></li>
+                    <li><a class="hvr-underline-from-center" href="order.html">Order</a></li>
+                    <li><a class="hvr-underline-from-center" href="contact.html">Contact</a></li>
+                    <li><a class="hvr-underline-from-center" href="login.html">Login</a></li>
                 </ul>
             </div>
         </div>
